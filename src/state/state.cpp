@@ -13,13 +13,15 @@
  * @return int 
  */
 //2 6 7 8 20
-static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
+//static const int material_table[7] = {0, 3, 10, 8, 9, 20, 100};
 
-int State::evaluate(){
+int State::evaluate(int player){
+  int material_table[7] = {0, 4, 10, 8, 9, 20, 200};
+  int myking = 0, opking = 0;
   int value = 0;
   for(int i = 0; i < 6; i++){
     for(int j = 0; j < 5; j++){
-      switch (this->board.board[this->player][i][j])
+      switch (this->board.board[player][i][j])
       {
       case 1:
         value+=material_table[1];
@@ -36,10 +38,14 @@ int State::evaluate(){
       case 5:
         value+=material_table[5];
         break;
+      case 6:
+        myking = 1;
+        value+=material_table[6];
+        break;
       default:
         break;
       }
-      switch (this->board.board[1 -this->player][i][j])
+      switch (this->board.board[1 -player][i][j])
       {
       case 1:
         value-=material_table[1];
@@ -56,11 +62,17 @@ int State::evaluate(){
       case 5:
         value-=material_table[5];
         break;
+      case 6:
+        opking = 1;
+        value-=material_table[6];
+        break;
       default:
         break;
       }
     }
   }
+  if(!myking) value-=1500;
+  if(!opking) value+=1000;
   return value;
 }
 

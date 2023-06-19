@@ -3,10 +3,12 @@
 #include "../state/state.hpp"
 #include "./minimax.hpp"
 
-int Minimax::minimax(State * state, int depth, int maximizing){
+int Minimax::minimax(State * state, int depth, int maximizing, int player){
   int value, result = 0;
+  if(!state->legal_actions.size())
+    state->get_legal_actions();
   if(depth == 0 || !state->legal_actions.size()){
-    result = state -> evaluate();
+    result = state -> evaluate(player);
     return result;
   }
   if(maximizing){
@@ -14,7 +16,7 @@ int Minimax::minimax(State * state, int depth, int maximizing){
     for(auto it : state -> legal_actions){
       State * next = state -> next_state(it);
       //next->get_legal_actions();
-      value = minimax(next, depth - 1, 0);
+      value = minimax(next, depth - 1, 0, player);
       result = result > value ? result : value;
     }
     return result;
@@ -23,7 +25,7 @@ int Minimax::minimax(State * state, int depth, int maximizing){
     for(auto it : state -> legal_actions){
       State * next = state -> next_state(it);
       //next->get_legal_actions();
-      value = minimax(next, depth - 1, 1);
+      value = minimax(next, depth - 1, 1, player);
       result = result < value ? result : value;
     }
     return result;
@@ -43,7 +45,7 @@ Move Minimax::get_move(State *state, int depth){
   Move best = actions[0];
   int nowvalue =-2147483647;
   for(auto it : actions){
-    int temp = minimax(state->next_state(it), depth - 1, 1);
+    int temp = minimax(state->next_state(it), depth - 1, 0, state->player);
     if(temp > nowvalue){
       nowvalue = temp;
       best = it;

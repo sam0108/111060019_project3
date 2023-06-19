@@ -1,35 +1,36 @@
 #include <cstdlib>
 
 #include "../state/state.hpp"
-#include "./player_alphabeta.hpp"
+#include "./alphabeta.hpp"
 
-int Alphabeta::alphabeta(State * state, int depth, int maximizing, int a, int b){
+int Alphabeta::alphabeta(State * state, int depth, int maximizing, int a, int b, int player){
   int value, result;
+  if(!state->legal_actions.size())
+        state->get_legal_actions();
   if(depth == 0 || !state->legal_actions.size()){
-    result = state -> evaluate();
+    result = state -> evaluate(player);
     return result;
   }
   if(maximizing){
-    result = -2147483647;
+    result = -2100000000;
     for(auto it : state -> legal_actions){
       State * next = state -> next_state(it);
-      //next->get_legal_actions();
-      value = alphabeta(next, depth - 1, 0, a, b);
+      value = alphabeta(next, depth - 1, 0, a, b, player);
       result = result > value ? result : value;
-      a = result > a ? result : a;
+      a = a > result ? a : result;
       if(a >= b){
         break;
       }
     }
     return result;
   }else{
-    result = 2147483647;
+    result = 2100000000;
     for(auto it : state -> legal_actions){
       State * next = state -> next_state(it);
       //next->get_legal_actions();
-      value = alphabeta(next, depth - 1, 1, a, b);
+      value = alphabeta(next, depth - 1, 1, a, b, player);
       result = result < value ? result : value;
-      b = result < b ? result : b;
+      b = b < result ? b : result;
       if(b <= a){
         break;
       }
@@ -48,15 +49,22 @@ Move Alphabeta::get_move(State *state, int depth){
   if(!state->legal_actions.size())
     state->get_legal_actions();
   auto actions = state->legal_actions;
-  Move best = actions[0];
-  int nowvalue =-2147483647;
-  for(auto it : actions){
-    int temp = alphabeta(state->next_state(it), depth - 1, 1, 0, 0);//a?b?
-    if(temp > nowvalue){
-      nowvalue = temp;
-      best = it;
+  if(actions.size()){
+    Move best;
+    if(actions.size() >= 7){
+      best = actions[6];
+    }else{
+      best = actions[0];
     }
+    int nowvalue =-2147483647;
+    for(auto it : actions){
+      int temp = alphabeta(state->next_state(it), depth - 1, 0, -10000, 10000, state->player);
+      if(temp > nowvalue){
+        nowvalue = temp;
+        best = it;
+      }
+    }
+    return best;
   }
-  return best;
 }
 

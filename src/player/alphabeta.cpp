@@ -3,7 +3,7 @@
 
 #include "../config.hpp"
 #include "../state/state.hpp"
-#include "../policy/player_alphabeta.hpp"
+#include "../policy/alphabeta.hpp"
 
 
 State* root;
@@ -40,7 +40,10 @@ void read_board(std::ifstream& fin) {
  */
 void write_valid_spot(std::ofstream& fout) {
   // Keep updating the output until getting killed.
-  int depth = 3;
+  auto move = Alphabeta::get_move(root, 3);
+  fout << move.first.first << " " << move.first.second << " "\
+       << move.second.first << " " << move.second.second << std::endl;
+  int depth = 5;
   while(true) {
     // Choose a random spot.
     auto move = Alphabeta::get_move(root, depth++);
