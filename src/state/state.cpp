@@ -4,6 +4,7 @@
 
 #include "./state.hpp"
 #include "../config.hpp"
+//#include "../main.cpp"
 
 
 /**
@@ -11,9 +12,56 @@
  * 
  * @return int 
  */
+//2 6 7 8 20
+static const int material_table[7] = {0, 2, 6, 7, 8, 20, 100};
+
 int State::evaluate(){
-  // [TODO] design your own evaluation function
-  return 0;
+  int value = 0;
+  for(int i = 0; i < 6; i++){
+    for(int j = 0; j < 5; j++){
+      switch (this->board.board[this->player][i][j])
+      {
+      case 1:
+        value+=material_table[1];
+        break;
+      case 2:
+        value+=material_table[2];
+        break;
+      case 3:
+        value+=material_table[3];
+        break;
+      case 4:
+        value+=material_table[4];
+        break;
+      case 5:
+        value+=material_table[5];
+        break;
+      default:
+        break;
+      }
+      switch (this->board.board[1 -this->player][i][j])
+      {
+      case 1:
+        value-=material_table[1];
+        break;
+      case 2:
+        value-=material_table[2];
+        break;
+      case 3:
+        value-=material_table[3];
+        break;
+      case 4:
+        value-=material_table[4];
+        break;
+      case 5:
+        value-=material_table[5];
+        break;
+      default:
+        break;
+      }
+    }
+  }
+  return value;
 }
 
 
